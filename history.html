@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ประวัติการบันทึก</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    td input {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h2>รายการทั้งหมด</h2>
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>วันที่</th>
+        <th>รายการ</th>
+        <th>จำนวนเงิน</th>
+        <th>ประเภท</th>
+        <th>หมายเหตุ</th>
+        <th>จัดการ</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <p style="margin-top:40px;">
+    🔙 <a href="index.html">กลับไปหน้าเมนูหลัก</a>
+  </p>
+
+  <script>
+    async function loadData() {
+      const res = await fetch('/get_data');
+      const data = await res.json();
+      const tbody = document.querySelector('#dataTable tbody');
+      tbody.innerHTML = '';
+      data.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input value="${row[0] || ''}"></td>
+          <td><input value="${row[1] || ''}"></td>
+          <td><input value="${row[2] || ''}"></td>
+          <td><input value="${row[3] || ''}"></td>
+          <td><input value="${row[4] || ''}"></td>
+          <td>
+            <button onclick="updateRow(${index}, this)">บันทึก</button>
+            <button onclick="deleteRow(${index})">ลบ</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function deleteRow(index) {
+      if (!confirm('คุณต้องการลบรายการนี้จริงหรือไม่?')) return;
+      await fetch('/delete_row', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ index })
+      });
+      loadData();
+    }
+
+    async function updateRow(index, btn) {
+      const row = btn.closest('tr');
+      const inputs = row.querySelectorAll('input');
+      const newData = {
+        index,
+        date: inputs[0].value,
+        item: inputs[1].value,
+        amount: inputs[2].value,
+        category: inputs[3].value,
+        note: inputs[4].value
+      };
+      await fetch('/update_row', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newData)
+      });
+      alert('บันทึกเรียบร้อย');
+      loadData();
+    }
+
+    loadData();
+  </script>
+</body>
+</html>

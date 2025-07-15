@@ -1,0 +1,64 @@
+<form id="expenseForm">
+  <label>รายการ:
+    <select id="item">
+      <option>ทุเรียน</option>
+      <option>เนื้อทุเรียนแกะแล้ว</option>
+    </select>
+  </label><br><br>
+
+  <label>จำนวนเงิน:
+    <input type="number" id="amount" required>
+  </label><br><br>
+
+  <label>ประเภท:
+    <select id="category">
+      <option>เงินสด</option>
+      <option>โอน</option>
+      <option>อื่นๆ</option>
+    </select>
+  </label><br><br>
+
+  <label>หมายเหตุ:
+    <input type="text" id="note" placeholder="เช่น ลูกค้าประจำ, ส่ง Grab">
+  </label><br><br>
+
+  <button type="submit">บันทึก</button>
+</form>
+
+<p style="margin-top:40px;">
+  🔙 <a href="index.html">กลับไปหน้าเมนูหลัก</a>
+</p>
+
+<script>
+  document.getElementById('expenseForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const amount = document.getElementById('amount').value;
+    const category = document.getElementById('category').value;
+
+    const data = {
+      item: document.getElementById('item').value,
+      amount: amount,
+      category: category,
+      note: document.getElementById('note').value,
+      date: new Date().toISOString()
+    };
+
+    const response = await fetch('/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.text();
+
+    if (category === "โอน") {
+      window.location.href = `/qr_page?amount=${amount}`;
+    } else {
+      alert(result);
+      document.getElementById('amount').value = '';
+      document.getElementById('note').value = '';
+      document.getElementById('amount').focus();
+    }
+  });
+</script>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>สรุปรายรับทั้งหมด</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 30px;
+      background: #f4f4f4;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .amount {
+      font-size: 24px;
+      color: green;
+    }
+    .back {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 สรุปรายรับทั้งหมด</h1>
+  <div id="summary"></div>
+
+  <a class="back" href="index.html">← กลับไปหน้าเมนูหลัก</a>
+
+  <script>
+    async function loadSummary() {
+      const res = await fetch('/summary_data');
+      const data = await res.json();
+
+      const div = document.getElementById('summary');
+
+      // 🔹 สรุปตามประเภท (เงินสด/โอน)
+      div.innerHTML += `<h2>ยอดรวมตามประเภทการชำระ</h2>`;
+      for (const [category, amount] of Object.entries(data.by_category)) {
+        div.innerHTML += `
+          <div class="card">
+            <b>ประเภท:</b> ${category}<br>
+            <div class="amount">${amount.toFixed(2)} บาท</div>
+          </div>
+        `;
+      }
+
+      // 🔹 สรุปตามรายการสินค้า
+      div.innerHTML += `<h2>ยอดรวมตามสินค้า</h2>`;
+      for (const [item, amount] of Object.entries(data.by_item)) {
+        div.innerHTML += `
+          <div class="card" style="background:#e9f9ff;">
+            <b>สินค้า:</b> ${item}<br>
+            <div class="amount">${amount.toFixed(2)} บาท</div>
+          </div>
+        `;
+      }
+
+      // 🔹 รวมทั้งหมด
+      div.innerHTML += `
+        <div class="card" style="background:#333;color:white;">
+          <b>รวมทั้งหมด:</b>
+          <div class="amount">${data.total.toFixed(2)} บาท</div>
+        </div>
+      `;
+    }
+
+    loadSummary();
+  </script>
+</body>
+</html>
