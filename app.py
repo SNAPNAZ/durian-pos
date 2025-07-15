@@ -4,17 +4,16 @@ from datetime import datetime
 import qrcode
 import io
 import os
-
+import json
 import gspread
 from google.oauth2.service_account import Credentials
 
 # ==== ตั้งค่า Google Sheets ====
-SERVICE_ACCOUNT_FILE = 'durian-pos-466019-5234a4d82f4c.json'
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SPREADSHEET_NAME = 'data'  # ตั้งชื่อ Google Sheets ว่า data
+SSCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+SERVICE_ACCOUNT_INFO = json.loads(os.environ["GOOGLE_CREDENTIALS"])
 
-credentials = Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_FILE, scopes=SCOPES
+credentials = Credentials.from_service_account_info(
+    SERVICE_ACCOUNT_INFO, scopes=SCOPES
 )
 client = gspread.authorize(credentials)
 sheet = client.open(SPREADSHEET_NAME).sheet1
