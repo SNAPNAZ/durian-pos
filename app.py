@@ -9,7 +9,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 
 # ==== ตั้งค่า Google Sheets ====
-SSCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SERVICE_ACCOUNT_INFO = json.loads(os.environ["GOOGLE_CREDENTIALS"])
 
 credentials = Credentials.from_service_account_info(
