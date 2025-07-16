@@ -16,6 +16,7 @@ credentials = Credentials.from_service_account_info(
     SERVICE_ACCOUNT_INFO, scopes=SCOPES
 )
 client = gspread.authorize(credentials)
+SPREADSHEET_NAME = 'thurianhialap'
 sheet = client.open(SPREADSHEET_NAME).sheet1
 
 # ==== Flask App ====
